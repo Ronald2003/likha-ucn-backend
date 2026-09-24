@@ -1,0 +1,10 @@
+# Netlify Redirects File
+# INSTRUCTIONS FOR DEPLOYMENT:
+# Before you deploy to Netlify, replace "https://YOUR-BACKEND.onrender.com" below 
+# with the ACTUAL URL of your deployed Render backend!
+
+/api/* https://YOUR-BACKEND.onrender.com/api/:splat 200
+/uploads/* https://YOUR-BACKEND.onrender.com/uploads/:splat 200
+
+# Fallback for React Router (SPA)
+/* /index.html 200
