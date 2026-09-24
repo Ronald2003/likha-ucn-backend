@@ -6,6 +6,11 @@ const db = new Pool({
   ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
 })
 
+db.on('error', (err, client) => {
+  console.error('Unexpected error on idle database client', err.message);
+  // Prevent Node from crashing on idle connection disconnects
+});
+
 db.connect((err) => {
   if (err) {
     console.error('Database connection error:', err.stack)
