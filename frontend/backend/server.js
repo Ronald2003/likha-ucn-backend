@@ -1,0 +1,35 @@
+require('dotenv').config()
+const express = require('express')
+const cors = require('cors')
+const path = require('path')
+const db = require('./config/db')
+const authRoutes = require('./routes/authRoutes')
+const productRoutes = require('./routes/productRoutes')
+const adminRoutes = require('./routes/adminRoutes')
+const orderRoutes = require('./routes/orderRoutes')
+const sellerRoutes = require('./routes/sellerRoutes')
+const messageRoutes = require('./routes/messageRoutes')
+const reviewRoutes = require('./routes/reviewRoutes')
+
+const app = express()
+app.use(cors())
+app.use(express.json())
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
+app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes)
+app.use('/api/admin', adminRoutes)
+app.use('/api/orders', orderRoutes)
+app.use('/api/sellers', sellerRoutes)
+app.use('/api/sellers', require('./routes/sellerRoutes'))
+app.use('/api/messages', messageRoutes)
+app.use('/api/reviews', reviewRoutes)
+app.use('/api/categories', require('./routes/categoryRoutes'))
+app.use('/api/users', require('./routes/userRoutes'))
+app.use('/api/notifications', require('./routes/notificationRoutes'))
+
+const PORT = 5000
+app.listen(PORT, () => {
+  console.log('Backend server running on port 5000')
+})
