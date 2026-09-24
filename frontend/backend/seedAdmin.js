@@ -2,7 +2,8 @@ const bcrypt = require('bcryptjs')
 const { Pool } = require('pg')
 
 const db = new Pool({
-  connectionString: 'postgresql://postgres:1234@localhost:5432/likha_db'
+  connectionString: process.env.DATABASE_URL || 'postgresql://postgres:1234@localhost:5432/likha_db',
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
 })
 
 async function seedAdmin() {
