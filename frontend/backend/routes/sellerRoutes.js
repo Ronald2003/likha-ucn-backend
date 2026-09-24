@@ -1,22 +1,10 @@
+const upload = require('../config/upload');
 const express = require('express')
 const db = require('../config/db')
 const { verifyToken } = require('../middleware/authMiddleware')
-const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const router = express.Router()
-
-if (!fs.existsSync('./uploads')) {
-  fs.mkdirSync('./uploads')
-}
-
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, 'seller-' + Date.now() + path.extname(file.originalname))
-  }
-})
-const upload = multer({ storage })
 
 router.get('/', async (req, res) => {
   try {
@@ -117,7 +105,7 @@ router.put('/request-name', verifyToken, async (req, res) => {
 
 router.put('/image', verifyToken, upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No image uploaded" })
-  const imageUrl = `/uploads/${req.file.filename}`
+  const imageUrl = req.file.path && req.file.path.startsWith('http') ? req.file.path : (req.file.path && req.file.path.startsWith('http') ? req.file.path : `/uploads/${req.file.filename}`)
 
   try {
     await db.query("UPDATE users SET profile_image_url = $1 WHERE id = $2", [imageUrl, req.user.id]);

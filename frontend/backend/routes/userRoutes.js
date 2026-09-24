@@ -1,6 +1,6 @@
+const upload = require('../config/upload');
 const express = require('express')
 const bcrypt = require('bcryptjs')
-const multer = require('multer')
 const path = require('path')
 const db = require('../config/db')
 const { verifyToken } = require('../middleware/authMiddleware')
@@ -16,12 +16,6 @@ router.get('/admin', async (req, res) => {
   }
 });
 
-
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => cb(null, 'user_' + Date.now() + path.extname(file.originalname))
-})
-const upload = multer({ storage })
 
 // Helper function for PostgreSQL
 const runSafeQuery = async (query, params = []) => {
@@ -60,7 +54,7 @@ router.put('/profile', verifyToken, upload.single('image'), async (req, res) => 
 
   if (req.file) {
     query += `, profile_image_url = $${paramIndex}`
-    params.push(`/uploads/${req.file.filename}`)
+    params.push((req.file.path && req.file.path.startsWith('http') ? req.file.path : `/uploads/${req.file.filename}`))
     paramIndex++
   }
 

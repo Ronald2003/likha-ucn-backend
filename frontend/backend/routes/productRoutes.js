@@ -1,20 +1,14 @@
+const upload = require('../config/upload');
 const express = require('express')
-const multer = require('multer')
 const path = require('path')
 const db = require('../config/db')
 const { verifyToken, isSeller } = require('../middleware/authMiddleware')
 
 const router = express.Router()
 
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-})
-const upload = multer({ storage })
-
 router.post('/', verifyToken, isSeller, upload.single('image'), async (req, res) => {
   const { name, price, description, category, stock, location, specific_address } = req.body
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : null
+  const imageUrl = req.file ? (req.file.path && req.file.path.startsWith('http') ? req.file.path : `/uploads/${req.file.filename}`) : null
 
   try {
     const result = await db.query(
@@ -34,7 +28,7 @@ router.put('/:id', verifyToken, isSeller, upload.single('image'), async (req, re
     if (req.file) {
       await db.query(
         'UPDATE products SET name=$1, price=$2, description=$3, category=$4, stock=$5, location=$6, specific_address=$7, image_url=$8, status=$9 WHERE id=$10 AND seller_id=$11',
-        [name, price, description, category, stock, location, specific_address, `/uploads/${req.file.filename}`, 'pending', req.params.id, req.user.id]
+        [name, price, description, category, stock, location, specific_address, (req.file.path && req.file.path.startsWith('http') ? req.file.path : `/uploads/${req.file.filename}`), 'pending', req.params.id, req.user.id]
       )
     } else {
       await db.query(
