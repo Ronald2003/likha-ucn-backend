@@ -125,13 +125,21 @@ export default function App() {
       setUser({ role })
       
       fetch('/api/users/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.email) setUserEmail(data.email)
-        if (data.name) setUserName(data.name)
-      })
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(res => {
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            setUser(null);
+            throw new Error('Unauthorized');
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data.email) setUserEmail(data.email)
+          if (data.name) setUserName(data.name)
+        })
       .catch(err => console.error(err))
     }
 
