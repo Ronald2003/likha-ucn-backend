@@ -63,8 +63,8 @@ router.post('/', verifyToken, async (req, res) => {
           data: {
             attributes: {
               payment_method_types: paymentMethod === 'bank' ? ['paymaya', 'gcash', 'card'] : ['qrph'],
-              success_url: `http://localhost:5173/?payment=success&order_id=${orderId}`,
-              cancel_url: 'http://localhost:5173/?payment=cancelled',
+              success_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=success&order_id=${orderId}`,
+              cancel_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=cancelled`,
               line_items: [{ currency: 'PHP', amount: amount * 100, name: 'Likha UCN Market Hub Order', quantity: 1 }]
             }
           }
