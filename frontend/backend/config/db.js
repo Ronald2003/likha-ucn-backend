@@ -82,8 +82,8 @@ async function initializeDatabase() {
     `)
 
     try {
-      await db.query("ALTER TABLE order_items ADD COLUMN status TEXT DEFAULT 'pending'")
-      await db.query("ALTER TABLE messages ADD COLUMN is_read BOOLEAN DEFAULT FALSE")
+      await db.query("ALTER TABLE order_items ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending'")
+      await db.query("ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT FALSE")
       await db.query("ALTER TABLE seller_profiles ADD COLUMN IF NOT EXISTS logo_url TEXT")
       await db.query("ALTER TABLE seller_profiles ADD COLUMN IF NOT EXISTS profile_image_url TEXT")
       await db.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_image_url TEXT")
