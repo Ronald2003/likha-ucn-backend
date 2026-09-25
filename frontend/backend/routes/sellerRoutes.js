@@ -103,7 +103,15 @@ router.put('/request-name', verifyToken, async (req, res) => {
   }
 })
 
-router.put('/image', verifyToken, upload.single('image'), async (req, res) => {
+router.put('/image', verifyToken, (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error("Multer upload error:", err);
+      return res.status(400).json({ error: "Image upload failed: " + err.message });
+    }
+    next();
+  });
+}, async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No image uploaded" })
   const imageUrl = req.file.path && req.file.path.startsWith('http') ? req.file.path : (req.file.path && req.file.path.startsWith('http') ? req.file.path : `/uploads/${req.file.filename}`)
 

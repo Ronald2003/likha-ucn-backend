@@ -123,7 +123,7 @@ export default function SellerDashboard() {
       fetchProfile()
     } catch (error) {
       console.error(error)
-      alert('Failed to update profile image.')
+      alert('Failed to update profile image: ' + (error.response?.data?.error || error.message))
     }
   }
 

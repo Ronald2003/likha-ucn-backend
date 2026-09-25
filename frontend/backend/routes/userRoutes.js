@@ -39,7 +39,15 @@ router.get('/me', verifyToken, async (req, res) => {
   }
 })
 
-router.put('/profile', verifyToken, upload.single('image'), async (req, res) => {
+router.put('/profile', verifyToken, (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error("Multer upload error in routes/userRoutes.js:", err);
+      return res.status(400).json({ error: "Image upload failed: " + err.message });
+    }
+    next();
+  });
+}, async (req, res) => {
   const { name, email, phone, password } = req.body
   
   let query = 'UPDATE users SET name = $1, email = $2, phone = $3'

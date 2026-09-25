@@ -21,7 +21,15 @@ router.post('/', verifyToken, isSeller, upload.single('image'), async (req, res)
   }
 })
 
-router.put('/:id', verifyToken, isSeller, upload.single('image'), async (req, res) => {
+router.put('/:id', verifyToken, isSeller, (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      console.error("Multer upload error in routes/productRoutes.js:", err);
+      return res.status(400).json({ error: "Image upload failed: " + err.message });
+    }
+    next();
+  });
+}, async (req, res) => {
   const { name, price, description, category, stock, location, specific_address } = req.body
   
   try {
