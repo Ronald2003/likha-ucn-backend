@@ -109,8 +109,8 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
                   <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                     <div className="flex items-center gap-3">
                       <span className="font-bold text-gray-800 text-sm">{order.store_name || 'UCN Seller'}</span>
-                      <button onClick={(e) => { e.stopPropagation(); setInitialChat({ contact_id: order.seller_id, name: order.store_name || 'UCN Seller', role: 'seller' }); setView('chat'); }} className="bg-[#7C121A] text-white px-3 py-1.5 rounded text-[10px] font-bold tracking-wide hover:bg-[#590e15] transition z-10 relative">Chat</button>
-                        <button onClick={(e) => { e.stopPropagation(); setSelectedSeller(order.seller_id); setView('sellerProfile'); }} className="border border-gray-300 text-gray-600 px-3 py-1.5 rounded text-[10px] font-bold bg-white hover:bg-gray-50 transition z-10 relative">View Shop</button>
+                      <button onClick={(e) => { e.stopPropagation(); setInitialChat({ contact_id: order.seller_id, name: order.store_name || 'UCN Seller', role: 'seller' }); setView('chat'); }} className="hidden md:block bg-[#7C121A] text-white px-3 py-1.5 rounded text-[10px] font-bold tracking-wide hover:bg-[#590e15] transition z-10 relative">Chat</button>
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedSeller(order.seller_id); setView('sellerProfile'); }} className="hidden md:block border border-gray-300 text-gray-600 px-3 py-1.5 rounded text-[10px] font-bold bg-white hover:bg-gray-50 transition z-10 relative">View Shop</button>
                     </div>
                     <div className="flex items-center gap-3 text-sm">
                       <span className="text-[#7C121A] font-bold uppercase">{order.status}</span>
@@ -133,7 +133,7 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
                   <div className="p-4 border-t border-gray-100 bg-orange-50/20 flex flex-col items-end gap-4">
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-600">Item Total:</span>
-                      <span className="text-2xl font-bold text-[#7C121A]">&#8369;{order.total_amount?.toFixed(2)}</span>
+                      <span className="text-xl md:text-2xl font-bold text-[#7C121A]">&#8369;{order.total_amount?.toFixed(2)}</span>
                     </div>
                     {order.status === 'completed' && String(order.has_reviewed) === '0' && reviewingOrderId !== order.id && (
                       <div className="flex gap-2">
@@ -283,12 +283,12 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
                   <img src={selectedOrder.image_url ? ("" + selectedOrder.image_url) : 'https://images.unsplash.com/photo-1664455340023-214c33a9d0bd?q=80&w=1032&auto=format&fit=crop'} alt={selectedOrder.product_name} className="w-24 h-24 object-cover border border-gray-200 rounded-sm shadow-sm" />
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-800">{selectedOrder.product_name}</h3>
+                      <h3 className="text-sm md:text-lg font-bold text-gray-800">{selectedOrder.product_name}</h3>
                       <p className="text-sm text-gray-500 mt-1">x{selectedOrder.quantity}</p>
                     </div>
                     <div className="text-right flex items-center justify-end gap-3">
                       <span className="text-gray-500 line-through text-sm">&#8369;{(selectedOrder.price * 1.2).toFixed(2)}</span>
-                      <span className="text-xl font-bold text-[#7C121A]">&#8369;{selectedOrder.price.toFixed(2)}</span>
+                      <span className="text-base md:text-xl font-bold text-[#7C121A]">&#8369;{selectedOrder.price.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -296,7 +296,7 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
 
               {/* Payment Details */}
               <div className="flex justify-end mb-6">
-                <div className="bg-white border border-gray-200 rounded-sm p-4 w-96">
+                <div className="bg-white border border-gray-200 rounded-sm p-4 w-full md:w-96">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-gray-500 text-sm">Payment Method</span>
                     <span className="font-bold text-gray-800 text-sm uppercase">{selectedOrder.payment_method === 'qrph' ? 'QRPH' : selectedOrder.payment_method === 'bank' ? 'Bank Transfer' : 'Cash-On-Pickup'}</span>
@@ -315,7 +315,7 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
 
             {/* Modal Footer */}
             <div className="p-6 border-t border-gray-200 bg-white flex justify-between items-center">
-              <span className="text-gray-500 text-sm italic">Thank you for shopping at Likha UCN Market Hub!</span>
+              <span className="text-gray-500 text-[10px] md:text-sm italic">Thank you for shopping at Likha UCN Market Hub!</span>
               {selectedOrder.status === 'completed' && (
                 <button onClick={() => {
                     setCheckoutItems([{
