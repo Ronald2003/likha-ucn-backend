@@ -50,8 +50,8 @@ export default function App() {
       setToasts((prev) => [...prev, { id, message: msgStr, type }]);
       
       setTimeout(() => {
-        setToasts((prev) => prev.filter(t => t.id !== id));
-      }, 4000);
+          setToasts((prev) => prev.filter(t => t.id !== id));
+        }, 8000);
     };
   }, []);
 
