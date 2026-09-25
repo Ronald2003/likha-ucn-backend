@@ -87,6 +87,20 @@ async function initializeDatabase() {
       await db.query("ALTER TABLE seller_profiles ADD COLUMN IF NOT EXISTS logo_url TEXT")
       await db.query("ALTER TABLE seller_profiles ADD COLUMN IF NOT EXISTS profile_image_url TEXT")
       await db.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_image_url TEXT")
+      
+      // Ensure all development columns exist in production database
+      const alters = [
+        "ALTER TABLE orders ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+        "ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method TEXT",
+        "ALTER TABLE order_items ADD COLUMN IF NOT EXISTS ready_at TIMESTAMP",
+        "ALTER TABLE order_items ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP",
+        "ALTER TABLE products ADD COLUMN IF NOT EXISTS location TEXT",
+        "ALTER TABLE products ADD COLUMN IF NOT EXISTS specific_address TEXT"
+      ];
+      for (let q of alters) {
+        await db.query(q);
+      }
+
     } catch (e) {
       // Column might already exist, safe to ignore
     }
