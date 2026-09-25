@@ -223,7 +223,7 @@ export default function App() {
     <div className="min-h-screen bg-[#FDF9F1] font-sans flex flex-col relative selection:bg-red-200 text-gray-800 overflow-x-hidden pb-[calc(70px+env(safe-area-inset-bottom))] md:pb-0">
       
       <header className={`w-full sticky top-0 z-50 transition-shadow ${scrolled ? "shadow-md" : ""}`}>
-        <div className="bg-[#590e15] text-[#FDF9F1] text-xs py-2 px-4 flex justify-between items-center hidden sm:flex">
+        <div className="bg-[#590e15] text-[#FDF9F1] text-[9px] sm:text-xs py-1.5 sm:py-2 px-2 sm:px-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <TruckIcon className="w-4 h-4" />
             Reliable Campus Meetups & Delivery
@@ -475,7 +475,7 @@ export default function App() {
       <ChatbotWidget />
 
       
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 pointer-events-none">
+      <div className="fixed top-16 md:top-auto md:bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 pointer-events-none w-[90%] md:w-auto">
         {toasts.map(toast => {
           const bgColors = {
             green: 'bg-green-50 border-green-200 text-green-800',
@@ -489,7 +489,7 @@ export default function App() {
           };
           
           return (
-            <div key={toast.id} className={`flex items-center gap-3 p-4 rounded-xl shadow-lg border animate-in slide-in-from-bottom-5 fade-in duration-300 pointer-events-auto max-w-md w-max ${bgColors[toast.type]}`}>
+            <div key={toast.id} className={`flex items-center gap-2 md:gap-3 px-3 py-2 md:p-4 rounded-xl shadow-lg border animate-in slide-in-from-top-5 md:slide-in-from-bottom-5 fade-in duration-300 pointer-events-auto w-full max-w-md md:w-max ${bgColors[toast.type]}`}>
               <div className="flex-shrink-0">
                 {toast.type === 'green' && (
                   <svg className={`w-5 h-5 ${iconColors.green}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
