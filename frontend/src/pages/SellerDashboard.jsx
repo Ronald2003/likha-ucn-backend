@@ -213,7 +213,7 @@ export default function SellerDashboard() {
       resetForm()
       fetchProducts()
     } catch (error) {
-      alert('Failed to save product.')
+      alert('Failed to save product: ' + (error.response?.data?.error || error.message))
     }
   }
 
