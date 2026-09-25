@@ -36,7 +36,7 @@ export default function AuthView({ setView, setUser, initialEmail = '', initialI
     setCountdown(60);
     try {
       const res = await axios.post('/api/auth/send-otp', { email })
-      alert('Demo Mode Active: Your verification code for ' + email + ' is: ' + res.data.debug_otp)
+      alert('Your verification code for ' + email + ' is: ' + res.data.debug_otp)
       setOtpSent(true)
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to send OTP')
