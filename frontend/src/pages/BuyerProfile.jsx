@@ -295,7 +295,7 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
               </div>
 
               {/* Payment Details */}
-              <div className="flex justify-end mb-6">
+              <div className="flex flex-col items-end gap-4 mb-6 w-full">
                 <div className="bg-white border border-gray-200 rounded-sm p-4 w-full md:w-96">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-gray-500 text-sm">Payment Method</span>
@@ -323,7 +323,7 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
                     }])
                     setView('checkout')
                     setSelectedOrder(null)
-                  }} disabled={selectedOrder.current_stock <= 0} className="w-full mt-4 bg-[#7C121A] text-white px-8 py-3 rounded-sm text-sm font-bold hover:bg-red-900 transition shadow-sm uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400">
+                  }} disabled={selectedOrder.current_stock <= 0} className="w-full md:w-96 mt-2 bg-[#7C121A] text-white px-8 py-3 rounded-sm text-sm font-bold hover:bg-red-900 transition shadow-sm uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400">
                     {selectedOrder.current_stock <= 0 ? 'Unavailable' : 'Buy Again'}
                   </button>
               )}
