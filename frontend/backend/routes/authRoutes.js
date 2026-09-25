@@ -62,42 +62,20 @@ module.exports = router
 const otpStore = new Map();
 
 router.post('/send-otp', async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ error: 'Email required' });
   
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 });
-  
-  console.log(`[OTP] Generated ${otp} for ${email}`);
-  
-  try {
-    let testAccount = await nodemailer.createTestAccount();
-    let transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
-      port: 587,
-      secure: false,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    });
-
-    let info = await transporter.sendMail({
-      from: '"Likha UCN" <noreply@likhaucn.edu>',
-      to: email,
-      subject: "Likha UCN - Your Verification Code",
-      text: `Your verification code is ${otp}. It expires in 10 minutes.`,
-    });
-
-    console.log("Message sent: %s", info.messageId);
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email required' });
     
-    res.json({ message: 'OTP sent', preview: nodemailer.getTestMessageUrl(info), debug_otp: otp });
-  } catch (e) {
-    console.error(e);
-    // Fallback if ethereal fails
-    res.json({ message: 'OTP sent (mock)', debug_otp: otp });
-  }
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 });
+    
+    console.log(`[OTP] Generated ${otp} for ${email}`);
+
+    // Render Free Tier blocks all outbound SMTP (Ports 25, 465, 587).
+    // To prevent the app from hanging and returning a 504 Timeout,
+    // we bypass SMTP entirely and return the debug_otp directly.
+    return res.json({ message: 'OTP sent (Render Free Tier mock)', debug_otp: otp });
+
 });
 
 router.post('/verify-otp', (req, res) => {
