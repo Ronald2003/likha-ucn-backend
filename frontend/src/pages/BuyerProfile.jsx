@@ -307,7 +307,7 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
                   </div>
                   <div className="flex justify-between items-center border-t border-gray-100 pt-3">
                     <span className="text-gray-800 font-bold text-sm">Order Total</span>
-                    <span className="text-2xl font-bold text-[#7C121A]">&#8369;{selectedOrder.total_amount?.toFixed(2)}</span>
+                    <span className="text-xl md:text-2xl font-bold text-[#7C121A]">&#8369;{selectedOrder.total_amount?.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
