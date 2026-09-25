@@ -310,12 +310,6 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
                     <span className="text-xl md:text-2xl font-bold text-[#7C121A]">&#8369;{selectedOrder.total_amount?.toFixed(2)}</span>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-6 border-t border-gray-200 bg-white flex justify-between items-center">
-              <span className="text-gray-500 text-[10px] md:text-sm italic">Thank you for shopping at Likha UCN Market Hub!</span>
               {selectedOrder.status === 'completed' && (
                 <button onClick={() => {
                     setCheckoutItems([{
@@ -329,11 +323,14 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
                     }])
                     setView('checkout')
                     setSelectedOrder(null)
-                  }} disabled={selectedOrder.current_stock <= 0} className="bg-[#7C121A] text-white px-8 py-3 rounded-sm text-sm font-bold hover:bg-red-900 transition shadow-sm uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400">
+                  }} disabled={selectedOrder.current_stock <= 0} className="w-full mt-4 bg-[#7C121A] text-white px-8 py-3 rounded-sm text-sm font-bold hover:bg-red-900 transition shadow-sm uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400">
                     {selectedOrder.current_stock <= 0 ? 'Unavailable' : 'Buy Again'}
                   </button>
               )}
-            </div>
+                </div>
+                <div className="text-center pb-8"><span className="text-gray-500 text-[10px] md:text-sm italic">Thank you for shopping at Likha UCN Market Hub!</span></div>
+              </div>
+
 
           </div>
         </div>
