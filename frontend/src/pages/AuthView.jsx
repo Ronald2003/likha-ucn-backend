@@ -13,6 +13,15 @@ export default function AuthView({ setView, setUser, initialEmail = '', initialI
   const [otp, setOtp] = useState('')
   const [otpSent, setOtpSent] = useState(false)
   const [otpVerified, setOtpVerified] = useState(false)
+  const [countdown, setCountdown] = useState(0)
+  
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   useEffect(() => {
     if (initialEmail) {
@@ -23,6 +32,8 @@ export default function AuthView({ setView, setUser, initialEmail = '', initialI
 
   const handleSendOtp = async () => {
     if (!email) return alert('Please enter an email first.')
+    if (countdown > 0) return;
+    setCountdown(60);
     try {
       const res = await axios.post('/api/auth/send-otp', { email })
       alert('Verification code sent to ' + email + '. (For testing, check backend logs or Ethereal link, or enter: ' + res.data.debug_otp + ')')
@@ -108,9 +119,9 @@ export default function AuthView({ setView, setUser, initialEmail = '', initialI
             <div className="flex gap-2">
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} readOnly={!isLogin && otpVerified} required className="w-full border border-gray-200 rounded-md px-4 py-2 text-sm outline-none focus:border-[#7C121A]" />
               {!isLogin && !otpVerified && (
-                <button type="button" onClick={handleSendOtp} className="bg-gray-800 text-white px-3 py-2 rounded-md text-xs font-bold hover:bg-black transition whitespace-nowrap">
-                  Send Code
-                </button>
+                <button type="button" onClick={handleSendOtp} disabled={countdown > 0} className={`${countdown > 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-800 hover:bg-black'} text-white px-3 py-2 rounded-md text-xs font-bold transition whitespace-nowrap`}>
+                    {countdown > 0 ? `Resend in ${countdown}s` : 'Send Code'}
+                  </button>
               )}
             </div>
           </div>
