@@ -472,7 +472,7 @@ export default function App() {
         )}
       </div>
 
-      <ChatbotWidget />
+      <ChatbotWidget setView={setView} setInitialChat={setInitialChat} />
 
       
       <div className="fixed top-16 md:top-auto md:bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 pointer-events-none w-[90%] md:w-auto">
