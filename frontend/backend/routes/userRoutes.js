@@ -202,7 +202,14 @@ router.get('/admin/user/:id', async (req, res) => {
       data.stats.total_orders = data.purchases.length
       data.stats.total_purchases = totalPurchases
 
-      const buyerReviewsResult = await db.query("SELECT * FROM reviews WHERE buyer_id = $1", [userId])
+      const buyerReviewsResult = await db.query(`
+        SELECT r.*, p.name as product_name, s.store_name as seller_store, u.name as seller_name
+        FROM reviews r 
+        LEFT JOIN products p ON r.product_id = p.id 
+        LEFT JOIN seller_profiles s ON p.seller_id = s.user_id
+        LEFT JOIN users u ON p.seller_id = u.id
+        WHERE r.buyer_id = $1
+      `, [userId])
       data.reviews = buyerReviewsResult.rows
       data.stats.total_reviews = data.reviews.length
     }
