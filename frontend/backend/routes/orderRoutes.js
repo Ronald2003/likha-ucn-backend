@@ -66,7 +66,7 @@ router.post('/', verifyToken, async (req, res) => {
             success_redirect_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=success&order_id=${orderId}`,
             failure_redirect_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=cancelled`,
             currency: 'PHP',
-            payment_methods: paymentMethod === 'bank' ? ['BPI', 'BDO', 'UBP', 'RCBC'] : ['GCASH']
+            ...(paymentMethod === 'gcash' ? { payment_methods: ['GCASH'] } : {})
           })
         })
         const xenditData = await xenditRes.json()
