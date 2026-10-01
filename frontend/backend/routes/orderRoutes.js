@@ -50,7 +50,7 @@ router.post('/', verifyToken, async (req, res) => {
       )
     }
 
-    if (paymentMethod === 'qrph' || paymentMethod === 'bank') {
+    if (paymentMethod === 'gcash' || paymentMethod === 'qrph' || paymentMethod === 'bank') {
         const encodedKey = Buffer.from(process.env.XENDIT_SECRET_KEY + ':').toString('base64')
         const xenditRes = await fetch('https://api.xendit.co/v2/invoices', {
           method: 'POST',
@@ -65,7 +65,8 @@ router.post('/', verifyToken, async (req, res) => {
             description: 'Likha UCN Market Hub Order',
             success_redirect_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=success&order_id=${orderId}`,
             failure_redirect_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=cancelled`,
-            currency: 'PHP'
+            currency: 'PHP',
+            payment_methods: paymentMethod === 'bank' ? ['BPI', 'BDO', 'UBP', 'RCBC'] : ['GCASH']
           })
         })
         const xenditData = await xenditRes.json()

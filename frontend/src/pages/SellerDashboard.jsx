@@ -568,7 +568,7 @@ export default function SellerDashboard() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">Payment:</span>
-                    <span className="uppercase font-bold text-gray-900">{selectedOrder.payment_method === 'qrph' ? 'QRPh' : selectedOrder.payment_method}</span>
+                    <span className="uppercase font-bold text-gray-900">{(selectedOrder.payment_method === 'qrph' || selectedOrder.payment_method === 'gcash') ? 'GCash' : selectedOrder.payment_method}</span>
                   </div>
                   <div className="flex justify-between pb-2 border-b border-stone-100 mb-2 mt-2 pt-2">
                     <span className="font-semibold">Total Amount:</span>

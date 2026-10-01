@@ -52,9 +52,9 @@ export default function ChatbotWidget({ setView, setInitialChat }) {
   }
 
   const buyerFaqs = [
-    { q: 'How do I order?', a: 'Add items to your cart, proceed to checkout, and select QRPh or Cash-on-Pickup.' },
+    { q: 'How do I order?', a: 'Add items to your cart, proceed to checkout, and select GCash or Cash-on-Pickup.' },
     { q: 'Where do I pick up orders?', a: 'Sellers will update your order status to Ready for Pickup. Coordinate directly via the messaging feature.' },
-    { q: 'What payment methods can I use?', a: 'Cash-on-Pickup (order goes through instantly) or QRPh/Bank Transfer via the PayMongo gateway — you\'ll be redirected back to Likha Hub once payment succeeds.' },
+    { q: 'What payment methods can I use?', a: 'Cash-on-Pickup (order goes through instantly) or GCash/Bank Transfer via the Xendit gateway — you\'ll be redirected back to Likha Hub once payment succeeds.' },
     { q: 'How do I track my order?', a: 'Go to My Account > Purchase History. Status moves from Pending to Ready for Pickup to Completed.' },
     { q: 'How do I leave a review?', a: 'Once the seller marks your order Completed, a Rate button appears — give 1 to 5 stars plus a comment, and it shows on the shop page right away.' },
     { q: 'How do I create an account?', a: 'Click LOGIN > Register > select Buyer, then verify with the 6-digit OTP code sent to you.' },

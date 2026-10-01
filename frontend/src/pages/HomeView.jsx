@@ -93,7 +93,7 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
             <div className="shrink-0"><WalletIcon className="w-8 h-8" /></div>
             <div>
               <h4 className="font-bold text-gray-800 text-sm leading-tight">Secure Payments</h4>
-              <p className="text-xs text-gray-500 mt-1">QRPh & Cash accepted</p>
+              <p className="text-xs text-gray-500 mt-1">GCash & Cash accepted</p>
             </div>
           </div>
           <div className="hidden lg:block w-px h-12 bg-gray-200"></div>

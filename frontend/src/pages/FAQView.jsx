@@ -22,7 +22,7 @@ export default function FAQView({ user, setView, setInitialChat }) {
     },
     {
       question: "How do I pay for my orders?",
-      answer: "Pay securely using the QRPh integration via PayMongo during checkout, or arrange Cash on Delivery directly with the seller if they offer it."
+      answer: "Pay securely using the GCash integration via Xendit during checkout, or arrange Cash on Delivery directly with the seller if they offer it."
     },
     {
       question: "How do I become a seller?",

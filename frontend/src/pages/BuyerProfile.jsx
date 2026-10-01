@@ -299,7 +299,7 @@ export default function BuyerProfile({ initialTab = "purchases", setView, setSel
                 <div className="bg-white border border-gray-200 rounded-sm p-4 w-full md:w-96">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-gray-500 text-sm">Payment Method</span>
-                    <span className="font-bold text-gray-800 text-sm uppercase">{selectedOrder.payment_method === 'qrph' ? 'QRPH' : selectedOrder.payment_method === 'bank' ? 'Bank Transfer' : 'Cash-On-Pickup'}</span>
+                    <span className="font-bold text-gray-800 text-sm uppercase">{(selectedOrder.payment_method === 'qrph' || selectedOrder.payment_method === 'gcash') ? 'GCASH' : selectedOrder.payment_method === 'bank' ? 'Bank Transfer' : 'Cash-On-Pickup'}</span>
                   </div>
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-gray-500 text-sm">Payment Status</span>

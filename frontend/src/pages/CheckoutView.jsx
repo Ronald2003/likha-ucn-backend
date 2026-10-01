@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 export default function CheckoutView({ checkoutItems, setView, onPlaceOrder }) {
-  const [paymentMethod, setPaymentMethod] = useState('qrph')
+  const [paymentMethod, setPaymentMethod] = useState('gcash')
 
   const subtotal = checkoutItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   const total = subtotal
@@ -54,7 +54,7 @@ export default function CheckoutView({ checkoutItems, setView, onPlaceOrder }) {
             <h3 className="font-bold text-gray-800 mb-4 text-lg">Payment Method</h3>
             <div className="flex flex-col gap-3">
               {[
-                { id: 'qrph', label: 'QRPh' },
+                { id: 'gcash', label: 'GCash' },
                 { id: 'bank', label: 'Bank Transfer' },
                 { id: 'cop', label: 'Cash-on-Pickup' },
               ].map((method) => (
