@@ -51,35 +51,33 @@ router.post('/', verifyToken, async (req, res) => {
     }
 
     if (paymentMethod === 'qrph' || paymentMethod === 'bank') {
-      const encodedKey = Buffer.from(process.env.PAYMONGO_SECRET_KEY + ':').toString('base64')
-      const paymongoRes = await fetch('https://api.paymongo.com/v1/checkout_sessions', {
-        method: 'POST',
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          authorization: `Basic ${encodedKey}`
-        },
-        body: JSON.stringify({
-          data: {
-            attributes: {
-              payment_method_types: paymentMethod === 'bank' ? ['paymaya', 'gcash', 'card'] : ['qrph'],
-              success_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=success&order_id=${orderId}`,
-              cancel_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=cancelled`,
-              line_items: [{ currency: 'PHP', amount: amount * 100, name: 'Likha UCN Market Hub Order', quantity: 1 }]
-            }
-          }
+        const encodedKey = Buffer.from(process.env.XENDIT_SECRET_KEY + ':').toString('base64')
+        const xenditRes = await fetch('https://api.xendit.co/v2/invoices', {
+          method: 'POST',
+          headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            authorization: `Basic ${encodedKey}`
+          },
+          body: JSON.stringify({
+            external_id: `order_${orderId}_${Date.now()}`,
+            amount: amount,
+            description: 'Likha UCN Market Hub Order',
+            success_redirect_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=success&order_id=${orderId}`,
+            failure_redirect_url: `${req.headers.origin || 'http://localhost:5173'}/?payment=cancelled`,
+            currency: 'PHP'
+          })
         })
-      })
-      const paymongoData = await paymongoRes.json()
-      
-      if (paymongoData.errors) {
-        throw new Error('Invalid PayMongo Test Key')
-      }
-      
-      await client.query('INSERT INTO payments (order_id, paymongo_reference, status) VALUES ($1, $2, $3)', [orderId, paymongoData.data.id, 'pending'])
-      await client.query('COMMIT')
-      return res.json({ message: 'Order placed successfully', orderId, checkoutUrl: paymongoData.data.attributes.checkout_url })
-    } else {
+        const xenditData = await xenditRes.json()
+        
+        if (xenditData.error_code) {
+          throw new Error('Xendit Error: ' + xenditData.message)
+        }
+        
+        await client.query('INSERT INTO payments (order_id, paymongo_reference, status) VALUES ($1, $2, $3)', [orderId, xenditData.id, 'pending'])
+        await client.query('COMMIT')
+        return res.json({ message: 'Order placed successfully', orderId, checkoutUrl: xenditData.invoice_url })
+      } else {
       await client.query('INSERT INTO payments (order_id, paymongo_reference, status) VALUES ($1, $2, $3)', [orderId, 'manual', 'pending'])
       await client.query('COMMIT')
       return res.json({ message: 'Order placed successfully', orderId, checkoutUrl: null })
