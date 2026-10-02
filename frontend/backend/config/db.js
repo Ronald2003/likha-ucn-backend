@@ -164,6 +164,23 @@ async function initializeDatabase() {
       }
     }
 
+    
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        id SERIAL PRIMARY KEY,
+        setting_key TEXT UNIQUE,
+        setting_value TEXT
+      )
+    `)
+    
+    await db.query(`
+      INSERT INTO site_settings (setting_key, setting_value) 
+      VALUES ('hero_image', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1000&q=80')
+      ON CONFLICT (setting_key) DO NOTHING
+    `)
+    
+    await db.query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS image_url TEXT`)
+
     console.log('Database tables verified and initialized successfully.')
   } catch (error) {
     console.error('Error initializing database tables:', error)
