@@ -11,6 +11,7 @@ export default function AdminPanel({ setView, setInitialChat }) {
   const [newCategory, setNewCategory] = useState('')
   const [selectedPendingSeller, setSelectedPendingSeller] = useState(null)
   const [selectedPendingProduct, setSelectedPendingProduct] = useState(null)
+  const [settings, setSettings] = useState({})
 
   useEffect(() => {
     fetchData()
@@ -24,11 +25,13 @@ export default function AdminPanel({ setView, setInitialChat }) {
       const resProducts = await axios.get('/api/admin/pending-products', { headers })
       const resCategories = await axios.get('/api/categories')
       const resNames = await axios.get('/api/admin/pending-names', { headers })
+      const resSettings = await axios.get('/api/settings')
       
       setSellers(resSellers.data)
       setProducts(resProducts.data)
       setCategories(resCategories.data)
       setNameRequests(resNames.data)
+      setSettings(resSettings.data)
     } catch (error) {
       console.error(error)
     }
@@ -145,6 +148,8 @@ export default function AdminPanel({ setView, setInitialChat }) {
             <div className="mb-6 pb-6 border-b border-gray-100">
               <h4 className="text-sm font-bold text-gray-800 mb-2">Home Page Hero Image</h4>
               <p className="text-xs text-gray-500 mb-3">Recommended size: 1200x800px. This image appears at the top of the main landing page.</p>
+              {settings.hero_image && <img src={settings.hero_image} alt="Hero Preview" className="w-full max-w-sm h-32 object-cover rounded-md mb-3 border border-gray-200 shadow-sm" />}
+
               <label className="bg-[#7C121A] text-white px-4 py-2 rounded-md text-sm font-bold cursor-pointer hover:bg-[#5a0c12] transition inline-block">
                 Upload New Image
                 <input type="file" accept="image/*" className="hidden" onChange={handleHeroUpload} />
@@ -162,8 +167,8 @@ export default function AdminPanel({ setView, setInitialChat }) {
           <div className="flex flex-wrap gap-2">
             {categories.map(cat => (
               <div key={cat.id} className="bg-gray-50 border border-gray-200 px-3 py-1 rounded flex items-center gap-2 text-sm">
-                <label className="cursor-pointer text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded flex items-center" title="Upload Image (500x500px)">
-                  IMG
+                <label className="cursor-pointer text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded flex items-center gap-2" title="Upload Image (500x500px)">
+                  {cat.image_url ? <img src={cat.image_url} alt="cat" className="w-4 h-4 rounded-full object-cover" /> : 'IMG'}
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCategoryUpload(e, cat.id)} />
                 </label>
                 <span>{cat.name}</span>
