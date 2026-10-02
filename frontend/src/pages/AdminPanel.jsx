@@ -12,6 +12,8 @@ export default function AdminPanel({ setView, setInitialChat }) {
   const [selectedPendingSeller, setSelectedPendingSeller] = useState(null)
   const [selectedPendingProduct, setSelectedPendingProduct] = useState(null)
   const [settings, setSettings] = useState({})
+  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [editCatName, setEditCatName] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -64,17 +66,37 @@ export default function AdminPanel({ setView, setInitialChat }) {
     }
   }
 
+
+  const handleRenameCategory = async (e) => {
+    if (e && e.preventDefault) e.preventDefault()
+    if (!editCatName.trim() || !selectedCategory || editCatName === selectedCategory.name) return
+    try {
+      const token = localStorage.getItem('token')
+      await axios.put(`/api/categories/${selectedCategory.id}`, { name: editCatName }, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      fetchData()
+      setSelectedCategory(prev => ({...prev, name: editCatName}))
+      alert('Category renamed successfully!')
+    } catch (error) {
+      alert('Failed to rename category')
+    }
+  }
+
   const handleDeleteCategory = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this category?")) return
     try {
       const token = localStorage.getItem('token')
       await axios.delete(`/api/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchData()
+      setSelectedCategory(null)
     } catch (error) {
       alert('Failed to delete category')
     }
   }
+
 
   const handleNameRequest = async (action, id) => {
     try {
@@ -118,6 +140,7 @@ export default function AdminPanel({ setView, setInitialChat }) {
       })
       alert('Category image updated successfully!')
       fetchData()
+      if (selectedCategory && categoryId === selectedCategory.id) { setSelectedCategory(prev => ({...prev, image_url: res.data.imageUrl})) }
     } catch (err) {
       alert('Failed to upload category image')
     }
@@ -164,18 +187,19 @@ export default function AdminPanel({ setView, setInitialChat }) {
             <input type="text" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder="New Category Name" className="border border-gray-200 rounded-md px-4 py-2 text-sm outline-none w-full" />
             <button type="submit" className="bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-bold">Add</button>
           </form>
-          <div className="flex flex-wrap gap-2">
-            {categories.map(cat => (
-              <div key={cat.id} className="bg-gray-50 border border-gray-200 px-3 py-1 rounded flex items-center gap-2 text-sm">
-                <label className="cursor-pointer text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded flex items-center gap-2" title="Upload Image (500x500px)">
-                  {cat.image_url ? <img src={cat.image_url} alt="cat" className="w-4 h-4 rounded-full object-cover" /> : 'IMG'}
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCategoryUpload(e, cat.id)} />
-                </label>
-                <span>{cat.name}</span>
-                <button onClick={() => handleDeleteCategory(cat.id)} className="text-red-500 font-bold hover:text-red-700">X</button>
-              </div>
-            ))}
-          </div>
+          <div className="flex flex-wrap gap-3">
+              {categories.map(cat => (
+                <button 
+                  key={cat.id} 
+                  onClick={() => { setSelectedCategory(cat); setEditCatName(cat.name); }}
+                  className="bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-md flex items-center gap-2 text-sm font-bold text-gray-700 hover:bg-gray-100 hover:border-gray-300 shadow-sm transition"
+                >
+                  {cat.image_url ? <img src={cat.image_url} alt={cat.name} className="w-5 h-5 rounded-full object-cover" /> : <div className="w-5 h-5 rounded-full bg-gray-200 text-[8px] flex items-center justify-center text-gray-400">IMG</div>}
+                  {cat.name}
+                  <span className="text-red-500 ml-1 font-bold">X</span>
+                </button>
+              ))}
+            </div>
         </div>
         </div>
       ) : activeTab === 'users' ? (
@@ -273,6 +297,49 @@ export default function AdminPanel({ setView, setInitialChat }) {
           </div>
         </div>
       )}
+
+      {selectedCategory && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4 animate-fade-in backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 relative flex flex-col items-center animate-scale-up border-2 border-gray-100">
+            <button 
+              onClick={() => setSelectedCategory(null)} 
+              className="absolute top-4 right-4 text-red-600 hover:text-red-800 transition transform hover:scale-110"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+
+            <label className="w-48 h-48 rounded-full border-2 border-[#991b1b] overflow-hidden mb-6 cursor-pointer relative group flex items-center justify-center shadow-inner mt-4 bg-gray-50">
+              {selectedCategory.image_url ? (
+                <img src={selectedCategory.image_url} alt="Category" className="w-full h-full object-cover transition duration-300 group-hover:opacity-50" />
+              ) : (
+                <span className="text-gray-400 font-bold group-hover:opacity-0 transition duration-300 text-center text-sm">Click to add<br/>image</span>
+              )}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                <span className="text-white font-bold text-sm tracking-widest">UPLOAD</span>
+              </div>
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCategoryUpload(e, selectedCategory.id)} />
+            </label>
+
+            <form onSubmit={handleRenameCategory} className="w-full">
+              <input 
+                value={editCatName} 
+                onChange={(e) => setEditCatName(e.target.value)}
+                onBlur={handleRenameCategory}
+                className="bg-[#991b1b] text-white text-center rounded-3xl px-6 py-3 text-lg font-bold w-full outline-none focus:ring-4 focus:ring-red-300 transition shadow-md placeholder-white/70"
+                placeholder="Category Name"
+              />
+            </form>
+            
+            <button 
+              onClick={() => handleDeleteCategory(selectedCategory.id)}
+              className="mt-6 text-xs font-bold text-red-500 hover:text-red-700 underline underline-offset-2 transition"
+            >
+              Delete Category
+            </button>
+          </div>
+        </div>
+      )}
+
       </div>
     </div>
   )

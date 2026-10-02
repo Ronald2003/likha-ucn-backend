@@ -42,4 +42,14 @@ router.delete('/:id', verifyToken, isAdmin, async (req, res) => {
   }
 })
 
+
+router.put('/:id', verifyToken, isAdmin, async (req, res) => {
+  try {
+    await db.query('UPDATE categories SET name = $1 WHERE id = $2', [req.body.name, req.params.id])
+    res.json({ message: 'Category name updated' })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 module.exports = router
