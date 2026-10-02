@@ -1,4 +1,4 @@
-rt { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import AdminUsersView from './AdminUsersView'
 import axios from 'axios'
 
@@ -153,15 +153,7 @@ export default function AdminPanel({ setView, setInitialChat }) {
             
           </div>
           
-          ﻿impo
-        </div>
-      ) : activeTab === 'users' ? (
-
-        <AdminUsersView setView={setView} setInitialChat={setInitialChat} />
-      ) : (
-      <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Manage Categories</h3>
           <form onSubmit={handleAddCategory} className="flex gap-2 mb-4">
             <input type="text" value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder="New Category Name" className="border border-gray-200 rounded-md px-4 py-2 text-sm outline-none w-full" />
@@ -170,12 +162,24 @@ export default function AdminPanel({ setView, setInitialChat }) {
           <div className="flex flex-wrap gap-2">
             {categories.map(cat => (
               <div key={cat.id} className="bg-gray-50 border border-gray-200 px-3 py-1 rounded flex items-center gap-2 text-sm">
+                <label className="cursor-pointer text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded flex items-center" title="Upload Image (500x500px)">
+                  IMG
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCategoryUpload(e, cat.id)} />
+                </label>
                 <span>{cat.name}</span>
                 <button onClick={() => handleDeleteCategory(cat.id)} className="text-red-500 font-bold hover:text-red-700">X</button>
               </div>
             ))}
           </div>
         </div>
+        </div>
+      ) : activeTab === 'users' ? (
+
+        <AdminUsersView setView={setView} setInitialChat={setInitialChat} />
+      ) : (
+      <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        
 
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <h3 className="text-lg font-bold text-gray-800 mb-4">Pending Store Name Changes</h3>
