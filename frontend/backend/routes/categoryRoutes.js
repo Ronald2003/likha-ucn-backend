@@ -1,6 +1,7 @@
-const express = require('express')
+﻿const express = require('express')
 const db = require('../config/db')
 const { verifyToken, isAdmin } = require('../middleware/authMiddleware')
+const upload = require('../config/upload')
 const router = express.Router()
 
 router.get('/', async (req, res) => {
@@ -18,6 +19,17 @@ router.post('/', verifyToken, isAdmin, async (req, res) => {
     res.json({ id: result.rows[0].id, name: req.body.name })
   } catch (err) {
     res.status(400).json({ error: err.message })
+  }
+})
+
+router.put('/:id/image', verifyToken, isAdmin, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No image uploaded' })
+    const imageUrl = req.file.path
+    await db.query('UPDATE categories SET image_url = $1 WHERE id = $2', [imageUrl, req.params.id])
+    res.json({ message: 'Category image updated', imageUrl })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
   }
 })
 

@@ -346,7 +346,7 @@ export default function App() {
       </header>
 
       <main className="flex-1 w-full">
-        {view === 'home' && <HomeView setView={setView} onViewDetails={handleViewProduct} setSignupEmail={setSignupEmail} setSignupIsSeller={setSignupIsSeller} />}
+        {view === 'home' && <HomeView setView={setView} onViewDetails={handleViewProduct} setSignupEmail={setSignupEmail} setSignupIsSeller={setSignupIsSeller} user={user} />}
         {view === 'auth' && <AuthView setView={setView} setUser={setUser} initialEmail={signupEmail} initialIsSeller={signupIsSeller} />}
         {view === 'shop' && <ShopView onViewDetails={handleViewProduct} />}
         

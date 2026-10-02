@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import axios from 'axios'
 import ProductCard from '../components/ProductCard'
 
@@ -7,7 +7,7 @@ const MeetupIcon = ({ className = "w-8 h-8" }) => <svg xmlns="http://www.w3.org/
 const WalletIcon = ({ className = "w-8 h-8" }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`text-red-800 ${className}`}><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>;
 const ChatIcon = ({ className = "w-8 h-8" }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`text-red-800 ${className}`}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>;
 
-export default function HomeView({ setView, onViewDetails, setSignupEmail, setSignupIsSeller }) {
+export default function HomeView({ setView, onViewDetails, setSignupEmail, setSignupIsSeller, user }) {
   const [joinEmail, setJoinEmail] = useState('');
   const handleJoin = () => {
     if (joinEmail && setSignupEmail) {
@@ -19,6 +19,7 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
 
   const [featuredProducts, setFeaturedProducts] = useState([])
   const [categories, setCategories] = useState([])
+  const [heroImage, setHeroImage] = useState('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1000&q=80')
 
   useEffect(() => {
     fetchData()
@@ -28,7 +29,12 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
     try {
       const resProd = await axios.get('/api/products/public')
       const resCat = await axios.get('/api/categories')
+      const resSettings = await axios.get('/api/settings')
       
+      if (resSettings.data.hero_image) {
+        setHeroImage(resSettings.data.hero_image)
+      }
+
       const productsWithImages = resProd.data.map(item => ({
         ...item,
         image: item.image_url ? `${item.image_url}` : 'https://images.unsplash.com/photo-1664455340023-214c33a9d0bd?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' 
@@ -41,16 +47,50 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
     }
   }
 
+  const handleHeroUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    try {
+      const token = localStorage.getItem('token')
+      const formData = new FormData()
+      formData.append('image', file)
+      const res = await axios.put('/api/settings/hero', formData, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+      })
+      setHeroImage(res.data.imageUrl)
+      alert('Hero image updated successfully!')
+    } catch (err) {
+      alert('Failed to upload hero image: ' + (err.response?.data?.error || err.message))
+    }
+  }
+
+  const handleCategoryUpload = async (e, categoryId) => {
+    const file = e.target.files[0]
+    if (!file) return
+    try {
+      const token = localStorage.getItem('token')
+      const formData = new FormData()
+      formData.append('image', file)
+      const res = await axios.put(`/api/categories/${categoryId}/image`, formData, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+      })
+      setCategories(prev => prev.map(c => c.id === categoryId ? { ...c, image_url: res.data.imageUrl } : c))
+      alert('Category image updated successfully!')
+    } catch (err) {
+      alert('Failed to upload category image: ' + (err.response?.data?.error || err.message))
+    }
+  }
+
   return (
     <div className="flex flex-col w-full">
-      <section className="w-full bg-[#7C121A] text-[#FDF9F1] flex flex-col md:flex-row pb-24 relative overflow-hidden">
+      <section className="w-full bg-[#7C121A] text-[#FDF9F1] flex flex-col md:flex-row pb-24 relative overflow-hidden group">
         <div className="w-full md:w-1/2 px-6 md:px-16 lg:px-24 pt-16 pb-12 flex flex-col justify-center z-10">
           <p className="text-sm tracking-[0.3em] mb-4 text-red-200">EXCLUSIVE CAMPUS MARKET</p>
           <h2 className="text-4xl lg:text-6xl font-serif leading-tight mb-6">
             Likha UCN <br/>Market Hub.
           </h2>
           <p className="text-red-100 max-w-md mb-8 text-sm md:text-base leading-relaxed">
-            The exclusive marketplace for University of Camarines Norte students. Buy and sell campus essentials safely.
+            The exclusive marketplace for University of Camarines Norte students and local entrepreneurs. Buy and sell campus essentials safely.
           </p>
           <div className="flex flex-wrap items-center gap-4">
             <button 
@@ -63,11 +103,21 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
         </div>
         <div className="w-full md:w-1/2 relative min-h-[400px] md:min-h-[600px]">
           <img 
-            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1000&q=80" 
+            src={heroImage} 
             alt="Campus Students" 
             className="absolute inset-0 w-full h-full object-cover md:rounded-bl-[100px] shadow-2xl z-0"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#7C121A] via-[#7C121A]/40 to-transparent md:w-1/2 z-10 pointer-events-none"></div>
+          
+          {user?.role === 'admin' && (
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+              <label className="bg-white text-gray-900 px-6 py-3 rounded-full font-bold cursor-pointer shadow-xl hover:bg-gray-100 transition flex flex-col items-center">
+                <span>Change Hero Image</span>
+                <span className="text-[10px] font-normal text-gray-500 mt-1">Recommended size: 1200x800px</span>
+                <input type="file" accept="image/*" className="hidden" onChange={handleHeroUpload} />
+              </label>
+            </div>
+          )}
         </div>
       </section>
 
@@ -110,7 +160,7 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
       <section className="max-w-7xl mx-auto px-6 py-20 w-full text-center">
         <div className="flex items-center justify-center gap-4 mb-12">
           <div className="h-px bg-gray-300 w-16 md:w-32"></div>
-          <h3 className="text-sm font-bold tracking-[0.2em] text-gray-500 uppercase">Shop By Category</h3>
+          <h3 className="text-sm font-bold tracking-[0.2em] text-gray-500 uppercase">CATEGORIES</h3>
           <div className="h-px bg-gray-300 w-16 md:w-32"></div>
         </div>
         
@@ -119,12 +169,28 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 justify-items-center">
             {categories.map((cat, idx) => (
-              <div key={idx} onClick={() => setView('shop')} className="flex flex-col items-center cursor-pointer group w-full">
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mb-4 bg-stone-100 p-2 shadow-sm border border-stone-200 group-hover:shadow-md transition-all group-hover:border-red-200">
-                  <img src="https://images.unsplash.com/photo-1664455340023-214c33a9d0bd?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt={cat.name} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition duration-500" />
+              <div key={idx} className="flex flex-col items-center w-full relative group">
+                <div 
+                  onClick={() => setView('shop')}
+                  className="cursor-pointer w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mb-4 bg-stone-100 p-2 shadow-sm border border-stone-200 group-hover:shadow-md transition-all group-hover:border-red-200 relative"
+                >
+                  <img src={cat.image_url || "https://images.unsplash.com/photo-1664455340023-214c33a9d0bd?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} alt={cat.name} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition duration-500" />
+                  
+                  {user?.role === 'admin' && (
+                    <div onClick={(e) => e.stopPropagation()} className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 rounded-full flex flex-col items-center justify-center transition-opacity">
+                      <label className="text-white text-[10px] font-bold cursor-pointer text-center leading-tight">
+                        Change<br/>Image
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCategoryUpload(e, cat.id)} />
+                      </label>
+                    </div>
+                  )}
                 </div>
                 <h4 className="font-bold text-gray-800 text-sm mb-1 leading-tight">{cat.name}</h4>
-                <p className="text-xs text-gray-500 group-hover:text-red-700 transition">Explore</p>
+                {user?.role === 'admin' ? (
+                   <p className="text-[10px] text-gray-400">Rec. 500x500px</p>
+                ) : (
+                   <p className="text-xs text-gray-500 group-hover:text-red-700 transition">Explore</p>
+                )}
               </div>
             ))}
           </div>

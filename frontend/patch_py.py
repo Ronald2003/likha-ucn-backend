@@ -1,38 +1,28 @@
-﻿with open("src/pages/BuyerProfile.jsx", "r") as f:
-    text = f.read()
+﻿import os
 
-# Replace the closing div of the scrollable area
-old_div_structure = """                  </div>
-                </div>
-              </div>
+with open('backend/config/db.js', 'r') as f:
+    db = f.read()
 
-              {/* Modal Footer */}"""
+settings = """
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        id SERIAL PRIMARY KEY,
+        setting_key TEXT UNIQUE,
+        setting_value TEXT
+      )
+    `)
+    
+    await db.query(`
+      INSERT INTO site_settings (setting_key, setting_value) 
+      VALUES ('hero_image', 'https://images.unsplash.com/photo-1556761175-5973dc0f32d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')
+      ON CONFLICT (setting_key) DO NOTHING
+    `)
+    
+    await db.query(`ALTER TABLE categories ADD COLUMN IF NOT EXISTS image_url TEXT`)
+"""
 
-new_div_structure = """                  </div>
-                </div>
+db = db.replace("console.log('Database initialized successfully')", settings + "\n    console.log('Database initialized successfully')")
 
-              {/* Modal Footer */}"""
-
-text = text.replace(old_div_structure, new_div_structure)
-
-old_footer_end = """                  </button>
-              )}
-            </div>
-
-          </div>
-        </div>"""
-
-new_footer_end = """                  </button>
-              )}
-            </div>
-            
-            </div>
-
-          </div>
-        </div>"""
-
-text = text.replace(old_footer_end, new_footer_end)
-
-with open("src/pages/BuyerProfile.jsx", "w") as f:
-    f.write(text)
-print("Done with python")
+with open('backend/config/db.js', 'w') as f:
+    f.write(db)
+print("Success")
