@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+rt { useState, useEffect } from 'react'
 import AdminUsersView from './AdminUsersView'
 import axios from 'axios'
 
@@ -85,7 +85,43 @@ export default function AdminPanel({ setView, setInitialChat }) {
     }
   }
 
+
+  const handleHeroUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    try {
+      const token = localStorage.getItem('token')
+      const formData = new FormData()
+      formData.append('image', file)
+      await axios.put('/api/settings/hero', formData, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+      })
+      alert('Hero image updated successfully!')
+      fetchData()
+    } catch (err) {
+      alert('Failed to upload hero image')
+    }
+  }
+
+  const handleCategoryUpload = async (e, categoryId) => {
+    const file = e.target.files[0]
+    if (!file) return
+    try {
+      const token = localStorage.getItem('token')
+      const formData = new FormData()
+      formData.append('image', file)
+      await axios.put(`/api/categories/${categoryId}/image`, formData, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+      })
+      alert('Category image updated successfully!')
+      fetchData()
+    } catch (err) {
+      alert('Failed to upload category image')
+    }
+  }
+
   return (
+
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12 w-full flex flex-col md:flex-row gap-8">
       {/* Sidebar Navigation */}
       <div className="w-full md:w-64 shrink-0 flex flex-col gap-2">
@@ -93,13 +129,34 @@ export default function AdminPanel({ setView, setInitialChat }) {
         <div className="flex md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
           <button onClick={() => setActiveTab('dashboard')} className={`text-sm font-bold px-4 py-2.5 rounded-lg text-left transition whitespace-nowrap ${activeTab === 'dashboard' ? 'bg-[#7C121A] text-white shadow-md' : 'text-gray-600 hover:bg-stone-100'}`}>Overview</button>
           <button onClick={() => setActiveTab('users')} className={`text-sm font-bold px-4 py-2.5 rounded-lg text-left transition whitespace-nowrap ${activeTab === 'users' ? 'bg-[#7C121A] text-white shadow-md' : 'text-gray-600 hover:bg-stone-100'}`}>User Management</button>
+          <button onClick={() => setActiveTab('settings')} className={`text-sm font-bold px-4 py-2.5 rounded-lg text-left transition whitespace-nowrap ${activeTab === 'settings' ? 'bg-[#7C121A] text-white shadow-md' : 'text-gray-600 hover:bg-stone-100'}`}>Site Settings</button>
         </div>
       </div>
       
       {/* Main Content */}
       <div className="flex-1 min-w-0">
       
-      {activeTab === 'users' ? (
+      
+      {activeTab === 'settings' ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Storefront Settings</h3>
+            
+            <div className="mb-6 pb-6 border-b border-gray-100">
+              <h4 className="text-sm font-bold text-gray-800 mb-2">Home Page Hero Image</h4>
+              <p className="text-xs text-gray-500 mb-3">Recommended size: 1200x800px. This image appears at the top of the main landing page.</p>
+              <label className="bg-[#7C121A] text-white px-4 py-2 rounded-md text-sm font-bold cursor-pointer hover:bg-[#5a0c12] transition inline-block">
+                Upload New Image
+                <input type="file" accept="image/*" className="hidden" onChange={handleHeroUpload} />
+              </label>
+            </div>
+            
+          </div>
+          
+          ﻿impo
+        </div>
+      ) : activeTab === 'users' ? (
+
         <AdminUsersView setView={setView} setInitialChat={setInitialChat} />
       ) : (
       <>

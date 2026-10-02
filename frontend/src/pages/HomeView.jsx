@@ -109,15 +109,7 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#7C121A] via-[#7C121A]/40 to-transparent md:w-1/2 z-10 pointer-events-none"></div>
           
-          {user?.role === 'admin' && (
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-              <label className="bg-white text-gray-900 px-6 py-3 rounded-full font-bold cursor-pointer shadow-xl hover:bg-gray-100 transition flex flex-col items-center">
-                <span>Change Hero Image</span>
-                <span className="text-[10px] font-normal text-gray-500 mt-1">Recommended size: 1200x800px</span>
-                <input type="file" accept="image/*" className="hidden" onChange={handleHeroUpload} />
-              </label>
-            </div>
-          )}
+
         </div>
       </section>
 
@@ -176,14 +168,7 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
                 >
                   <img src={cat.image_url || "https://images.unsplash.com/photo-1664455340023-214c33a9d0bd?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} alt={cat.name} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition duration-500" />
                   
-                  {user?.role === 'admin' && (
-                    <div onClick={(e) => e.stopPropagation()} className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 rounded-full flex flex-col items-center justify-center transition-opacity">
-                      <label className="text-white text-[10px] font-bold cursor-pointer text-center leading-tight">
-                        Change<br/>Image
-                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCategoryUpload(e, cat.id)} />
-                      </label>
-                    </div>
-                  )}
+                  
                 </div>
                 <h4 className="font-bold text-gray-800 text-sm mb-1 leading-tight">{cat.name}</h4>
                 {user?.role === 'admin' ? (
