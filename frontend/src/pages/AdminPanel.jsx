@@ -298,47 +298,75 @@ export default function AdminPanel({ setView, setInitialChat }) {
         </div>
       )}
 
+
       {selectedCategory && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4 animate-fade-in backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 relative flex flex-col items-center animate-scale-up border-2 border-gray-100">
-            <button 
-              onClick={() => setSelectedCategory(null)} 
-              className="absolute top-4 right-4 text-red-600 hover:text-red-800 transition transform hover:scale-110"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-
-            <label className="w-48 h-48 rounded-full border-2 border-[#991b1b] overflow-hidden mb-6 cursor-pointer relative group flex items-center justify-center shadow-inner mt-4 bg-gray-50">
-              {selectedCategory.image_url ? (
-                <img src={selectedCategory.image_url} alt="Category" className="w-full h-full object-cover transition duration-300 group-hover:opacity-50" />
-              ) : (
-                <span className="text-gray-400 font-bold group-hover:opacity-0 transition duration-300 text-center text-sm">Click to add<br/>image</span>
-              )}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
-                <span className="text-white font-bold text-sm tracking-widest">UPLOAD</span>
-              </div>
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCategoryUpload(e, selectedCategory.id)} />
-            </label>
-
-            <form onSubmit={handleRenameCategory} className="w-full">
-              <input 
-                value={editCatName} 
-                onChange={(e) => setEditCatName(e.target.value)}
-                onBlur={handleRenameCategory}
-                className="bg-[#991b1b] text-white text-center rounded-3xl px-6 py-3 text-lg font-bold w-full outline-none focus:ring-4 focus:ring-red-300 transition shadow-md placeholder-white/70"
-                placeholder="Category Name"
-              />
-            </form>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-scale-up">
             
-            <button 
-              onClick={() => handleDeleteCategory(selectedCategory.id)}
-              className="mt-6 text-xs font-bold text-red-500 hover:text-red-700 underline underline-offset-2 transition"
-            >
-              Delete Category
-            </button>
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+              <h3 className="text-lg font-bold text-gray-800">Edit Category</h3>
+              <button onClick={() => setSelectedCategory(null)} className="text-gray-400 hover:text-gray-700 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row gap-6">
+                
+                <div className="flex-1">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Category Image</label>
+                  <label className="block w-full aspect-video rounded-xl border-2 border-dashed border-gray-300 overflow-hidden cursor-pointer hover:border-red-400 hover:bg-red-50 transition relative group">
+                    {selectedCategory.image_url ? (
+                      <img src={selectedCategory.image_url} alt="Category Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span className="text-sm font-medium">Upload Image</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                       <span className="text-white font-bold text-sm bg-black/50 px-4 py-2 rounded-full">Change Image</span>
+                    </div>
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCategoryUpload(e, selectedCategory.id)} />
+                  </label>
+                  <p className="text-xs text-gray-500 mt-2 text-center">Recommended size: 500x500px</p>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center">
+                  <form onSubmit={handleRenameCategory}>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Category Name</label>
+                    <input 
+                      type="text"
+                      value={editCatName} 
+                      onChange={(e) => setEditCatName(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 outline-none focus:border-red-800 focus:ring-1 focus:ring-red-800 transition shadow-sm"
+                      placeholder="e.g. Handmade Crafts"
+                    />
+                    <button type="submit" className="w-full mt-4 bg-[#7C121A] text-white font-bold py-3 rounded-lg shadow hover:bg-[#5a0c12] transition">
+                      Save Changes
+                    </button>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+
+            <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-between items-center">
+              <button 
+                onClick={() => handleDeleteCategory(selectedCategory.id)}
+                className="text-red-600 hover:text-red-800 text-sm font-bold flex items-center gap-2 transition"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                Delete Category
+              </button>
+              <button onClick={() => setSelectedCategory(null)} className="text-gray-600 hover:text-gray-800 text-sm font-bold transition">
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
+
 
       </div>
     </div>
