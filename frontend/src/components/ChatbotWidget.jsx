@@ -12,9 +12,25 @@ export default function ChatbotWidget({ setView, setInitialChat }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY.current + 20) {
+        setIsVisible(false);
+      } else if (window.scrollY < lastScrollY.current - 20) {
+        setIsVisible(true);
+      }
+      lastScrollY.current = window.scrollY;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleFaqClick = (question, answer) => {
     setMessages(prev => [...prev, { text: question, isBot: false }])
@@ -71,11 +87,11 @@ export default function ChatbotWidget({ setView, setInitialChat }) {
   ]
 
   return (
-    <div className="fixed bottom-[80px] md:bottom-6 right-4 md:right-6 z-[90]">
+    <div className={`fixed bottom-[80px] md:bottom-6 right-4 md:right-6 z-40 transition-transform duration-300 ${(!isOpen && !isVisible) ? "translate-y-32 opacity-0" : "translate-y-0 opacity-100"}`}>
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-[#7C121A] text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-red-900 transition text-2xl font-bold"
+          className="bg-[#7C121A] text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-red-900 transition-all text-xl font-bold opacity-60 hover:opacity-100"
         >
           ?
         </button>

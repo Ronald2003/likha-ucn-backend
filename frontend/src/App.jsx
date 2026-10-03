@@ -34,6 +34,20 @@ const AdminIcon = ({ className = "w-5 h-5" }) => <svg viewBox="0 0 24 24" fill="
 
 export default function App() {
   const [toasts, setToasts] = useState([]);
+    const [serverWakingUp, setServerWakingUp] = useState(true);
+    
+    useEffect(() => {
+      const pingServer = async () => {
+        try {
+          const controller = new AbortController();
+          const id = setTimeout(() => controller.abort(), 8000);
+          await fetch('/api/categories', { signal: controller.signal });
+          clearTimeout(id);
+        } catch (err) {}
+        setServerWakingUp(false);
+      };
+      pingServer();
+    }, []);
   
   useEffect(() => {
     window.alert = (msg) => {
@@ -218,6 +232,17 @@ export default function App() {
   }
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0)
+
+
+  if (serverWakingUp) {
+    return (
+      <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-[9999] p-4 text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#7C121A] border-t-transparent mb-6"></div>
+        <h2 className="text-2xl font-serif font-bold text-gray-800 mb-3">Waking up the server...</h2>
+        <p className="text-sm text-gray-600 max-w-md">Likha uses eco-friendly cloud hosting which goes to sleep when inactive. Please wait up to 50 seconds while we spin things back up!</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FDF9F1] font-sans flex flex-col relative selection:bg-red-200 text-gray-800 overflow-x-hidden pb-[calc(70px+env(safe-area-inset-bottom))] md:pb-0">
