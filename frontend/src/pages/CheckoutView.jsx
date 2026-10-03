@@ -57,6 +57,7 @@ export default function CheckoutView({ checkoutItems, setView, onPlaceOrder }) {
                 { id: 'gcash', label: 'GCash' },
                 { id: 'bank', label: 'Bank Transfer' },
                 { id: 'cop', label: 'Cash-on-Pickup' },
+                  { id: 'cod', label: 'Cash-On-Delivery (COD)' },
               ].map((method) => (
                 <label
                   key={method.id}
