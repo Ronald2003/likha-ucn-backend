@@ -70,11 +70,15 @@ export default function AuthView({ setView, setUser, initialEmail = '', initialI
         if (!otpVerified) return alert('Please verify your email first.')
         if (!agreedToTerms) return alert('You must agree to the Terms of Service and Data Privacy Policy to register.')
         const role = isSeller ? 'seller' : 'buyer'
-        await axios.post('/api/auth/register', { 
+        const res = await axios.post('/api/auth/register', { 
           email, password, role, storeName, name: fullName, phone 
         })
-        alert('Registration submitted')
-        setIsLogin(true)
+        localStorage.setItem('token', res.data.token)
+        localStorage.setItem('role', res.data.role)
+        localStorage.setItem('showWelcome', res.data.role)
+        setUser({ role: res.data.role })
+        alert('Registration successful!')
+        setView('home')
       }
     } catch (error) {
       alert(error.response?.data?.message || error.response?.data?.error || 'An error occurred')

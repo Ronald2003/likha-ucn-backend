@@ -23,7 +23,22 @@ router.post('/register', async (req, res) => {
         [userId, storeName, 'pending']
       );
     }
-    res.json({ message: 'Registration successful', userId });
+    
+    // Auto login after registration
+    const token = jwt.sign(
+      { id: userId, role: role },
+      'LIKHA_SECRET_KEY',
+      { expiresIn: '24h' }
+    )
+    
+    res.json({ message: 'Registration successful', token, role, userId });
+  } catch (err) {
+    if (err.constraint === 'users_email_key' || err.message.includes('users_email_key')) {
+        return res.status(400).json({ error: 'This email is already registered. Please log in instead.' });
+    }
+    res.status(400).json({ error: err.message });
+  }
+});
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -61,6 +76,15 @@ const otpStore = new Map();
 router.post('/send-otp', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email required' });
+    
+    try {
+        const existingUser = await db.query('SELECT id FROM users WHERE email = $1', [email]);
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ error: 'This email is already registered. Please log in instead.' });
+        }
+    } catch (dbErr) {
+        // ignore and proceed
+    }
     
     const crypto = require('crypto');
     const otp = crypto.randomInt(100000, 999999).toString();

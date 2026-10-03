@@ -32,9 +32,37 @@ const DashboardIcon = ({ className = "w-5 h-5" }) => <svg viewBox="0 0 24 24" fi
 const UserIcon = ({ className = "w-5 h-5" }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>;
 const AdminIcon = ({ className = "w-5 h-5" }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>;
 
+
+const WelcomePopup = ({ role, onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl transform transition-all text-center">
+        <div className="w-16 h-16 bg-[#7C121A]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span className="text-3xl">🎉</span>
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          {role === 'seller' ? 'Welcome to Likha UCN, Partner!' : 'Welcome to Likha UCN!'}
+        </h2>
+        <p className="text-gray-600 mb-6">
+          {role === 'seller' 
+            ? 'We are thrilled to have your business on board. Start setting up your shop, adding products, and reaching new customers right away!' 
+            : 'Thank you for joining our community! Start exploring unique products from trusted local sellers today.'}
+        </p>
+        <button 
+          onClick={onClose}
+          className="w-full bg-[#7C121A] text-white py-3 rounded-xl font-bold hover:bg-[#6A0F15] transition shadow-lg shadow-[#7C121A]/20"
+        >
+          {role === 'seller' ? 'Go to Dashboard' : 'Start Shopping'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [toasts, setToasts] = useState([]);
     const [serverWakingUp, setServerWakingUp] = useState(true);
+    const [welcomeRole, setWelcomeRole] = useState(localStorage.getItem('showWelcome'));
     
     useEffect(() => {
       const pingServer = async () => {
