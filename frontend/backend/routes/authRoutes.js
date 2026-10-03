@@ -1,12 +1,10 @@
-const nodemailer = require('nodemailer');
-const express = require('express')
+﻿const express = require('express')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const db = require('../config/db')
-
 const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
 
+const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key_for_dev');
 const router = express.Router()
 
 router.post('/register', async (req, res) => {
@@ -60,8 +58,6 @@ router.post('/login', async (req, res) => {
   }
 })
 
-module.exports = router
-
 const otpStore = new Map();
 
 router.post('/send-otp', async (req, res) => {
@@ -98,18 +94,6 @@ router.post('/send-otp', async (req, res) => {
         return res.status(500).json({ error: 'Failed to send OTP email.' });
     }
 });
-    
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 });
-    
-    console.log(`[OTP] Generated ${otp} for ${email}`);
-
-    // Render Free Tier blocks all outbound SMTP (Ports 25, 465, 587).
-    // To prevent the app from hanging and returning a 504 Timeout,
-    // we bypass SMTP entirely and return the debug_otp directly.
-    return res.json({ message: 'OTP sent (Render Free Tier mock)', debug_otp: otp });
-
-});
 
 router.post('/verify-otp', (req, res) => {
   const { email, otp } = req.body;
@@ -126,3 +110,5 @@ router.post('/verify-otp', (req, res) => {
   otpStore.delete(email);
   res.json({ message: 'OTP verified' });
 });
+
+module.exports = router;
