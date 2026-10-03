@@ -65,6 +65,12 @@ export default function App() {
     const [welcomeRole, setWelcomeRole] = useState(localStorage.getItem('showWelcome'));
     
     useEffect(() => {
+      const handleWelcome = (e) => setWelcomeRole(e.detail);
+      window.addEventListener('showWelcome', handleWelcome);
+      return () => window.removeEventListener('showWelcome', handleWelcome);
+    }, []);
+    
+    useEffect(() => {
       const pingServer = async () => {
         try {
           const controller = new AbortController();
@@ -400,7 +406,7 @@ export default function App() {
 
       <main className="flex-1 w-full">
         {view === 'home' && <HomeView setView={setView} onViewDetails={handleViewProduct} setSignupEmail={setSignupEmail} setSignupIsSeller={setSignupIsSeller} user={user} />}
-        {view === 'auth' && <AuthView setView={setView} setUser={setUser} initialEmail={signupEmail} initialIsSeller={signupIsSeller} />}
+        {view === 'auth' && <AuthView setView={setView} setUser={setUser} initialEmail={signupEmail} initialIsSeller={signupIsSeller} setWelcomeRole={setWelcomeRole} />}
         {view === 'shop' && <ShopView onViewDetails={handleViewProduct} />}
         
         {view === 'cart' && (

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-export default function AuthView({ setView, setUser, initialEmail = '', initialIsSeller = false }) {
+export default function AuthView({ setView, setUser, initialEmail = '', initialIsSeller = false, setWelcomeRole }) {
   const [isLogin, setIsLogin] = useState(true)
   const [isSeller, setIsSeller] = useState(initialIsSeller)
   const [email, setEmail] = useState(initialEmail)
@@ -76,6 +76,8 @@ export default function AuthView({ setView, setUser, initialEmail = '', initialI
         localStorage.setItem('token', res.data.token)
         localStorage.setItem('role', res.data.role)
         localStorage.setItem('showWelcome', res.data.role)
+        window.dispatchEvent(new CustomEvent('showWelcome', { detail: res.data.role }));
+        if (setWelcomeRole) setWelcomeRole(res.data.role);
         setUser({ role: res.data.role })
         alert('Registration successful!')
         setView('home')
