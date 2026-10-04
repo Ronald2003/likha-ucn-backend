@@ -93,12 +93,25 @@ export default function HomeView({ setView, onViewDetails, setSignupEmail, setSi
             The exclusive marketplace for University of Camarines Norte students and local entrepreneurs. Buy and sell campus essentials safely.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <button 
-              onClick={() => setView('shop')}
-              className="bg-[#FDF9F1] text-[#7C121A] px-8 py-3 rounded-full font-bold text-sm tracking-wide hover:bg-white hover:shadow-lg transition flex items-center gap-2"
-            >
-              SHOP NOW <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
+            <ArrowRevealButton
+                label="SHOP NOW"
+                onClick={() => setView('shop')}
+                colors={{ fill: '#FDF9F1', textColor: '#7C121A' }}
+                icon={{
+                  side: "right",
+                  size: 24,
+                  type: "icon",
+                  icon: "arrow",
+                  color: "#FDF9F1",
+                  background: "#7C121A",
+                  padding: 12,
+                }}
+                font={{ fontWeight: 'bold', fontSize: '0.875rem', letterSpacing: '0.025em' }}
+                padding="12px 32px"
+                rounded={9999}
+                border={{ borderWidth: 0 }}
+                gap={16}
+              />
           </div>
         </div>
         <div className="w-full md:w-1/2 relative min-h-[400px] md:min-h-[600px]">
