@@ -531,6 +531,15 @@ export default function App() {
         )}
       </div>
 
+      {welcomeRole && (
+        <WelcomePopup 
+          role={welcomeRole} 
+          onClose={() => {
+            localStorage.removeItem('showWelcome');
+            setWelcomeRole(null);
+          }} 
+        />
+      )}
       <ChatbotWidget setView={setView} setInitialChat={setInitialChat} />
 
       
