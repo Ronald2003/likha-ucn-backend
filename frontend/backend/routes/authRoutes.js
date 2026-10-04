@@ -93,7 +93,7 @@ router.post('/send-otp', async (req, res) => {
             body: JSON.stringify({
                 email: email,
                 otp: otp,
-                secret: process.env.VERCEL_EMAIL_SECRET || 'dev_secret'
+                secret: process.env.PROXY_EMAIL_SECRET || 'dev_secret'
             })
         });
 

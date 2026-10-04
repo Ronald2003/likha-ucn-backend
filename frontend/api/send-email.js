@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   try {
     const { email, otp, secret } = req.body;
 
-    if (secret !== (process.env.VERCEL_EMAIL_SECRET || 'dev_secret')) {
+    if (secret !== (process.env.PROXY_EMAIL_SECRET || 'dev_secret')) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
