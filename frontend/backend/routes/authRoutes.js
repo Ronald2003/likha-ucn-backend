@@ -24,25 +24,20 @@ router.post('/register', async (req, res) => {
       );
     }
     
-    // Auto login after registration
     const token = jwt.sign(
       { id: userId, role: role },
       'LIKHA_SECRET_KEY',
       { expiresIn: '24h' }
-    )
+    );
     
     res.json({ message: 'Registration successful', token, role, userId });
   } catch (err) {
-    if (err.constraint === 'users_email_key' || err.message.includes('users_email_key')) {
+    if (err.constraint === 'users_email_key' || err.message && err.message.includes('users_email_key')) {
         return res.status(400).json({ error: 'This email is already registered. Please log in instead.' });
     }
     res.status(400).json({ error: err.message });
   }
 });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-})
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body
@@ -92,7 +87,6 @@ router.post('/send-otp', async (req, res) => {
     otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 });
     
     try {
-        
         const response = await fetch('https://ucnmarkethub.netlify.app/.netlify/functions/send-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
