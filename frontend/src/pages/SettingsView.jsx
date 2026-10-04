@@ -39,6 +39,12 @@ export default function SettingsView({ setUserName }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0]
     if (file) {
+      // Check if file is larger than 10MB (10485760 bytes)
+      if (file.size > 10485760) {
+        setToast({ message: 'File is too large. Please select an image under 10MB.', type: 'red' })
+        e.target.value = '' // clear the input
+        return
+      }
       setImageFile(file)
       setImagePreview(URL.createObjectURL(file))
     }
