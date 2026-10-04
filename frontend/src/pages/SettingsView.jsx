@@ -1,6 +1,5 @@
 ﻿import { useState, useEffect } from 'react'
 import axios from 'axios'
-import RadialRevealButton from '../components/originkit/ui/radial-reveal-button'
 
 export default function SettingsView({ setUserName }) {
   const [name, setName] = useState('')
@@ -201,11 +200,12 @@ export default function SettingsView({ setUserName }) {
             >
               Discard Changes
             </button>
-            <RadialRevealButton 
-              text="Save Changes"
+            <button 
               type="submit" 
               className="bg-[#7C121A] text-white px-8 py-3 rounded-md font-bold text-sm hover:bg-red-900 transition shadow-md"
-            />
+            >
+              Save Changes
+            </button>
           </div>
         </form>
       </div>
