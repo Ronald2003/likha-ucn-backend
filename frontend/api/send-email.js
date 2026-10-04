@@ -1,15 +1,25 @@
 ﻿import nodemailer from 'nodemailer';
 
-export const handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+export default async function handler(req, res) {
+  // CORS Headers in case they are needed
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    const { email, otp, secret } = JSON.parse(event.body);
+    const { email, otp, secret } = req.body;
 
-    if (secret !== (process.env.NETLIFY_EMAIL_SECRET || 'dev_secret')) {
-      return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
+    if (secret !== (process.env.VERCEL_EMAIL_SECRET || 'dev_secret')) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     const transporter = nodemailer.createTransport({
@@ -33,18 +43,9 @@ export const handler = async (event) => {
     };
 
     await transporter.sendMail(mailOptions);
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Email sent successfully via Netlify' })
-    };
+    return res.status(200).json({ message: 'Email sent successfully via Vercel' });
   } catch (error) {
     console.error('Email send error:', error);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Internal Server Error' })
-    };
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-};
+}
