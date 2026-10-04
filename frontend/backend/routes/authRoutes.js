@@ -87,21 +87,21 @@ router.post('/send-otp', async (req, res) => {
     otpStore.set(email, { otp, expiresAt: Date.now() + 10 * 60 * 1000 });
     
     try {
-        const response = await fetch(process.env.VERCEL_EMAIL_URL || 'https://likha-ucn.vercel.app/api/send-email', {
+        const response = await fetch('https://ucnmarkethub.netlify.app/.netlify/functions/send-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 email: email,
                 otp: otp,
-                secret: process.env.PROXY_EMAIL_SECRET || 'dev_secret'
+                secret: process.env.NETLIFY_EMAIL_SECRET || 'dev_secret'
             })
         });
 
         if (!response.ok) {
-            throw new Error('Vercel function rejected the email request');
+            throw new Error('Netlify function rejected the email request');
         }
 
-        console.log(`[OTP] Email securely dispatched to ${email} via Vercel Function.`);
+        console.log(`[OTP] Email securely dispatched to ${email} via Netlify Function.`);
         return res.json({ message: 'OTP securely sent to your email.' });
     } catch (error) {
         console.error('[OTP Error]:', error);
